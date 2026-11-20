@@ -1,5 +1,6 @@
 // Wrapper fetch terpusat: menyuntikkan token Bearer & mengurai respons standar {status, message, data}.
 const TOKEN_KEY = 'token'
+const API_BASE = import.meta.env.VITE_API_URL ?? '' // BARU
 
 export const getToken = () => localStorage.getItem(TOKEN_KEY)
 export const setToken = (token) => localStorage.setItem(TOKEN_KEY, token)
@@ -21,7 +22,7 @@ export async function apiRequest(path, { method = 'GET', body } = {}) {
 
   let res
   try {
-    res = await fetch(path, {
+    res = await fetch(`${API_BASE}${path}`, { // BARU
       method,
       headers,
       body: body !== undefined ? JSON.stringify(body) : undefined,
