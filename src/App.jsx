@@ -114,9 +114,11 @@ export default function App() {
   let page
   if (booting) {
     page = (
-      <p role="status" className="p-8 text-center text-slate-500 dark:text-slate-400">
-        Memuat sesi...
-      </p>
+      <main>
+        <p role="status" className="p-8 text-center text-slate-500 dark:text-slate-400">
+          Memuat sesi...
+        </p>
+      </main>
     )
   } else if (needsLogin) {
     // Tampilkan beranda di belakang modal, bukan layar kosong.
@@ -138,7 +140,7 @@ export default function App() {
       case 'login':
       case 'register':
         page = (
-          <div className="flex justify-center px-4 py-10">
+          <main className="flex justify-center px-4 py-10">
             <AuthPage
               key={route.name}
               mode={route.name}
@@ -147,7 +149,7 @@ export default function App() {
               onSwitchMode={(mode) => navigate(`/${mode}`)}
               onHome={() => navigate('/')}
             />
-          </div>
+          </main>
         )
         break
       default:

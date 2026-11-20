@@ -1,8 +1,6 @@
 // Pembungkus Toast UI Editor (mode Markdown + pratinjau berdampingan, tema gelap didukung).
+// Library editor (~1 MB) dimuat lazy lewat import() agar tidak membebani halaman publik/login.
 import { useEffect, useRef } from 'react'
-import { Editor } from '@toast-ui/editor'
-import '@toast-ui/editor/dist/toastui-editor.css'
-import '@toast-ui/editor/dist/theme/toastui-editor-dark.css'
 
 export default function MarkdownEditor({ value = '', onChange = () => {}, height = '400px', dark = false }) {
   const containerRef = useRef(null)
@@ -15,28 +13,39 @@ export default function MarkdownEditor({ value = '', onChange = () => {}, height
   })
 
   useEffect(() => {
-    const editor = new Editor({
-      el: containerRef.current,
-      height,
-      initialEditType: 'markdown',
-      previewStyle: 'vertical',
-      initialValue: latest.current.value,
-      theme: dark ? 'dark' : 'light',
-      usageStatistics: false,
-      events: { change: () => latest.current.onChange(editor.getMarkdown()) },
+    let cancelled = false
+    let editor
+    Promise.all([
+      import('@toast-ui/editor'),
+      import('@toast-ui/editor/dist/toastui-editor.css'),
+      import('@toast-ui/editor/dist/theme/toastui-editor-dark.css'),
+    ]).then(([{ Editor }]) => {
+      if (cancelled) return
+      editor = new Editor({
+        el: containerRef.current,
+        height,
+        initialEditType: 'markdown',
+        previewStyle: 'vertical',
+        initialValue: latest.current.value,
+        theme: dark ? 'dark' : 'light',
+        usageStatistics: false,
+        events: { change: () => latest.current.onChange(editor.getMarkdown()) },
+      })
+      editorRef.current = editor
     })
-    editorRef.current = editor
     return () => {
-      editor.destroy()
+      cancelled = true
+      editor?.destroy()
       editorRef.current = null
     }
   }, [height, dark])
 
-  // sinkronkan bila isi diubah dari luar (mis. hasil AI Generator)
+  // sinkronkan bila isi diubah dari luar (mis. hasil AI Generator); abaikan selama editor belum siap
   useEffect(() => {
     const editor = editorRef.current
-    if (editor.getMarkdown() !== value) editor.setMarkdown(value)
+    if (editor && editor.getMarkdown() !== value) editor.setMarkdown(value)
   }, [value])
 
-  return <div ref={containerRef} data-testid="markdown-editor" />
+  // minHeight mencegah layout bergeser saat editor selesai dimuat
+  return <div ref={containerRef} data-testid="markdown-editor" style={{ minHeight: height }} />
 }

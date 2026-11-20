@@ -18,6 +18,7 @@ export default function AuthModal({ mode = 'login', onClose, onSuccess }) {
     <div
       role="dialog"
       aria-modal="true"
+      aria-labelledby={`${current}-title`}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
       onClick={onClose}
     >

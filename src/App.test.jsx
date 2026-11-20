@@ -136,6 +136,11 @@ describe('App', () => {
       expect(screen.getByText('HALAMAN AUTH login')).toBeInTheDocument()
     })
 
+    it('halaman login berada di dalam landmark <main>', () => {
+      open('/login')
+      expect(screen.getByRole('main')).toContainElement(screen.getByText('HALAMAN AUTH login'))
+    })
+
     it('halaman login/register: pindah mode dan kembali ke beranda', async () => {
       const user = userEvent.setup()
       open('/login')
@@ -179,6 +184,7 @@ describe('App', () => {
       open('/author', { token: true })
 
       expect(screen.getByRole('status')).toHaveTextContent('Memuat sesi...')
+      expect(screen.getByRole('main')).toContainElement(screen.getByRole('status'))
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
       expect(await screen.findByText('WORKSPACE PENULIS')).toBeInTheDocument()
       expect(screen.getByText('budi')).toBeInTheDocument()
@@ -221,7 +227,7 @@ describe('App', () => {
       open('/login')
       await user.click(screen.getByText('sukses member'))
       expect(await screen.findByText('WORKSPACE PENULIS')).toBeInTheDocument()
-      expect(window.location.pathname).toBe('/author')
+      await waitFor(() => expect(window.location.pathname).toBe('/author'))
     })
   })
 
@@ -263,7 +269,7 @@ describe('App', () => {
       getProfile.mockResolvedValue(member)
       open('/admin', { token: true })
       expect(await screen.findByText('WORKSPACE PENULIS')).toBeInTheDocument()
-      expect(window.location.pathname).toBe('/author')
+      await waitFor(() => expect(window.location.pathname).toBe('/author'))
       expect(screen.queryByText('PANEL ADMIN')).not.toBeInTheDocument()
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     })
@@ -296,7 +302,7 @@ describe('App', () => {
       getProfile.mockResolvedValue(profile)
       open(path, { token: true })
       expect(await screen.findByText(text)).toBeInTheDocument()
-      expect(window.location.pathname).toBe(target)
+      await waitFor(() => expect(window.location.pathname).toBe(target))
       expect(screen.queryByText(/HALAMAN AUTH/)).not.toBeInTheDocument()
     })
   })

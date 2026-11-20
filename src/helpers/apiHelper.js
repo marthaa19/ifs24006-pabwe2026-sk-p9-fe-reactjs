@@ -1,6 +1,7 @@
 // Wrapper fetch terpusat: menyuntikkan token Bearer & mengurai respons standar {status, message, data}.
 const TOKEN_KEY = 'token'
-const API_BASE = import.meta.env.VITE_API_URL ?? '' // BARU
+// Base URL backend. Kosong saat dev (request lewat proxy Vite); diisi VITE_API_URL saat build produksi.
+const API_BASE = import.meta.env.VITE_API_URL ?? ''
 
 export const getToken = () => localStorage.getItem(TOKEN_KEY)
 export const setToken = (token) => localStorage.setItem(TOKEN_KEY, token)
@@ -22,7 +23,7 @@ export async function apiRequest(path, { method = 'GET', body } = {}) {
 
   let res
   try {
-    res = await fetch(`${API_BASE}${path}`, { // BARU
+    res = await fetch(`${API_BASE}${path}`, {
       method,
       headers,
       body: body !== undefined ? JSON.stringify(body) : undefined,
@@ -31,7 +32,7 @@ export async function apiRequest(path, { method = 'GET', body } = {}) {
     throw new ApiError('Tidak dapat terhubung ke server', 0)
   }
 
-  let json = null
+  let json
   try {
     json = await res.json()
   } catch {

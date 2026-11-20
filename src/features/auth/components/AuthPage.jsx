@@ -30,7 +30,7 @@ export default function AuthPage({ mode = 'login', onSuccess, onSwitchMode, onHo
 
   const card = (
     <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl dark:bg-slate-800">
-      <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+      <h1 id={`${prefix}-title`} className="text-2xl font-bold text-slate-900 dark:text-white">
         {isLogin ? 'Masuk ke Delcom Blog' : 'Buat Akun Penulis'}
       </h1>
       <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">

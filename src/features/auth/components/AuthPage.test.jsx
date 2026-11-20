@@ -11,6 +11,13 @@ vi.mock('../../../helpers/toolsHelper', () => ({ showError: vi.fn() }))
 describe('AuthPage', () => {
   beforeEach(() => vi.clearAllMocks())
 
+  it('judul punya id sesuai mode agar bisa menjadi nama dialog (aria-labelledby)', () => {
+    const { rerender } = render(<AuthPage onSuccess={vi.fn()} onSwitchMode={vi.fn()} />)
+    expect(screen.getByRole('heading', { level: 1 })).toHaveAttribute('id', 'login-title')
+    rerender(<AuthPage mode="register" onSuccess={vi.fn()} onSwitchMode={vi.fn()} />)
+    expect(screen.getByRole('heading', { level: 1 })).toHaveAttribute('id', 'register-title')
+  })
+
   it('mode login: id wajib tersedia & submit memanggil login', async () => {
     const user = userEvent.setup()
     const onSuccess = vi.fn()

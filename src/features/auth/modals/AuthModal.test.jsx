@@ -24,6 +24,14 @@ describe('AuthModal', () => {
     expect(screen.getByTestId('embedded')).toHaveTextContent('true')
   })
 
+  it('dialog diberi nama lewat aria-labelledby sesuai mode (login lalu register)', async () => {
+    const user = userEvent.setup()
+    render(<AuthModal onClose={vi.fn()} onSuccess={vi.fn()} />)
+    expect(screen.getByRole('dialog')).toHaveAttribute('aria-labelledby', 'login-title')
+    await user.click(screen.getByRole('button', { name: 'pindah' }))
+    expect(screen.getByRole('dialog')).toHaveAttribute('aria-labelledby', 'register-title')
+  })
+
   it('menerima mode awal register', () => {
     render(<AuthModal mode="register" onClose={vi.fn()} onSuccess={vi.fn()} />)
     expect(screen.getByTestId('mode')).toHaveTextContent('register')
